@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lh.cd.sysadmin.frame.mapper.SysadminMapper">
+	<sql id="selectUserListByPageWhere">
+		<where>
+			a.user_id = b.user_id
+			<if test="userAccount != null and userAccount != ''">
+				and a.user_account like concat(concat('%', #{userAccount}), '%')</if>
+			<if test="userName != null and userName != ''">and a.user_name like concat(concat('%', #{userName}), '%')
+			</if>
+			<if test="tel != null and tel != ''">
+				and b.tel like concat(concat('%', #{tel}), '%')
+			</if>
+			<if test="status != null and status != ''">
+				and a.status = #{status}
+			</if>
+			<if test="startBirthday != null and startBirthday != ''">
+				and date_format(birthday, '%Y-%m-%d')
+				<![CDATA[ >= ]]>
+				#{startBirthday}
+			</if>
+			<if test="endBirthday != null and endBirthday != ''">
+				and date_format(birthday, '%Y-%m-%d')
+				<![CDATA[ <= ]]>
+				#{endBirthday}
+			</if>
+		</where>
+	</sql>
+
+	<select id="selectUserListByPageCount" parameterType="java.util.Map" resultType="int">
+		select count(*) from tab_user_account a, tab_user_info b
+		<include refid="selectUserListByPageWhere" />
+	</select>
+
+	<select id="selectUserListByPage" parameterType="java.util.Map" resultType="com.lh.cd.pub.data.ResultMap">
+		select a.user_id, a.user_account, a.user_name, a.register_time, b.tel from tab_user_account a, tab_user_info b
+		<include refid="selectUserListByPageWhere" />
+		<if test="sort != null and sort != ''">
+			order by ${sort}
+			<if test="dir != null and dir != ''">${dir}</if>
+		</if>
+		<include refid="PubMapper.PaginateSql" />
+	</select>
+
+	<select id="selectSelectedUserByRoleId" parameterType="java.util.Map" resultType="com.lh.cd.pub.data.ResultMap">
+		select a.user_id, a.user_account, a.user_name 
+		from tab_user_account a, tab_user_role b
+		<where>
+			a.user_id = b.user_id
+			<if test="roleId != null">
+				and b.role_id = #{roleId}
+			</if>
+		</where>
+		<if test="sort != null and sort != ''">
+			order by ${sort}
+			<if test="dir != null and dir != ''">${dir}</if>
+		</if>
+	</select>
+
+	<select id="selectUsableUserByRoleId" parameterType="java.util.Map" resultType="com.lh.cd.pub.data.ResultMap">
+		select a.user_id, a.user_account, a.user_name from tab_user_account a
+		<where>
+			<if test="roleId != null">
+				and not exists (select 1 from tab_user_role b where a.user_id = b.user_id and b.role_id = #{roleId})
+			</if>
+		</where>
+		<if test="sort != null and sort != ''">
+			order by ${sort}
+			<if test="dir != null and dir != ''">${dir}</if>
+		</if>
+	</select>
+
+
+	<select id="selectRoleTreeByUserId" parameterType="java.util.Map" resultType="com.lh.cd.pub.data.ResultMap">
+		select a.role_id, a.role_name,b.user_id 
+		from (select * from tab_sys_role 	
+		<where>
+			<if test="status != null">
+				and status = #{status}
+			</if>
+		</where>) a 
+		left join (select * from tab_user_role
+		<where>
+			<if test="userId != null">
+				and user_id = #{userId}
+			</if>
+		</where>
+		) b on a.role_id=b.role_id 
+		order by a.role_name
+	</select>
+
+
+	<select id="selectMenuTreeByRoleId" parameterType="java.util.Map" resultType="com.lh.cd.pub.data.ResultMap">
+		select a.menu_id, a.menu_name, b.role_id 
+		from (select * from tab_sys_menu 
+		<where>
+			<if test="status != null">
+				and status = #{status}
+			</if>
+			<if test="parentId != null">
+				and parent_id = #{parentId}
+			</if>
+		</where>) a 
+		left join (select * from tab_sys_role_auth
+		<where>
+			<if test="roleId != null">
+				and role_id = #{roleId}
+			</if>
+		</where>
+		) b on a.menu_id=b.menu_id 
+		order by a.site_no, a.menu_name
+	</select>
+	
+	
+	<select id="selectGrantUserAuthByUserId" parameterType="java.util.Map" resultType="com.lh.cd.pub.data.ResultMap">
+		select a.menu_id, a.menu_name, b.user_id 
+		from (select * from tab_sys_menu 
+		<where>
+			<if test="status != null">
+				and status = #{status}
+			</if>
+			<if test="parentId != null">
+				and parent_id = #{parentId}
+			</if>
+		</where>) a 
+		left join (select * from tab_user_auth
+		<where>
+			<if test="userId != null">
+				and user_id = #{userId}
+			</if>
+		</where>
+		) b on a.menu_id=b.menu_id 
+		order by a.site_no, a.menu_name
+	</select>
+
+	<select id="selectRealUserAuthByUserId" parameterType="java.util.Map" resultType="com.lh.cd.pub.data.ResultMap">
+		<if test="userId != null">
+			select a.menu_id, a.menu_name, a.index_url, b.user_id 
+			from (select * from tab_sys_menu 
+			<where>
+				<if test="status != null">
+					and status = #{status}
+				</if>
+				<if test="parentId != null">
+					and parent_id = #{parentId}
+				</if>
+			</where>) a 
+			left join ((select user_id, menu_id from tab_user_auth 
+			<where>
+				<if test="userId != null">
+					and user_id = #{userId}
+				</if>
+			</where>
+	        )
+			union (select n.user_id, m.menu_id from tab_sys_role_auth m, tab_user_role n where m.role_id=n.role_id 
+				<if test="userId != null">
+					and n.user_id = #{userId}
+				</if>
+	        )) b on a.menu_id=b.menu_id 
+			order by a.site_no, a.menu_name
+		</if>
+		<if test="userId == null">
+			select menu_id, menu_name, index_url, 1 as user_id 
+			from tab_sys_menu 
+			<where>
+				<if test="status != null">
+					and status = #{status}
+				</if>
+				<if test="parentId != null">
+					and parent_id = #{parentId}
+				</if>
+			</where>
+			order by site_no, menu_name
+		</if>
+	</select>
+</mapper>

@@ -1,0 +1,82 @@
+
+	.header { background: #014c60 url(../images/icons/layout-browser-hd-bg.gif) repeat-x center;}
+
+
+.header h1 {font-size: 16px;color: #fff;padding: 3px 10px; font-family:"微软雅黑","黑体"}
+
+.home{background-image: url(../images/icons/home.gif) !important; }
+
+/*
+#validateCode{ float:left;} 
+.x-form-code{width:73px;height:20px;vertical-align:middle;cursor:pointer; float:left; margin-left:7px;} 
+*/
+
+.a1{color: #ffffff; text-decoration: none;}
+.a1:visited{color: #ffffff;}
+.a1:hover{color: #ffffff;text-decoration: none; cursor: hand;}
+
+.aoper{color: #111111; text-decoration: none;}
+.aoper:visited{color: #111111;}
+.aoper:hover{color: #666666;text-decoration: none; cursor: hand;}
+
+/*箭头刷新（普通）*/
+.arrow_refresh{
+	background-image:url(../images/icons/arrow_refresh.png) !important;
+}
+/*箭头刷新（小）*/
+.arrow_refresh_small{
+	background-image:url(../images/icons/arrow_refresh_small.png) !important;
+}
+/*箭头缩小/还原*/
+.arrow_in{
+	background-image:url(../images/icons/arrow_in.png) !important;
+}
+/*箭头放大/满屏*/
+.arrow_out{
+	background-image:url(../images/icons/arrow_out.png) !important;
+}
+/*添加*/
+.add{
+	background-image:url(../images/icons/add.png) !important;
+}
+/*删除*/
+.delete{
+	background-image:url(../images/icons/delete.png) !important;
+}
+/*修改*/
+.edit{
+	background-image:url(../images/icons/edit.png) !important;
+}
+/*查询 */
+.find{
+	background-image:url(../images/icons/find.png) !important;
+}
+/*查看*/
+.see{
+	background-image:url(../images/icons/zoom.png) !important;
+}
+/*导出数据到excel*/
+.excel{
+	background-image:url(../images/icons/excel.png) !important;
+}
+/*保存*/
+.save{
+	background-image:url(../images/icons/disk.png) !important;
+}
+/*pass*/
+.pass{
+	background-image:url(../images/icons/tick.png) !important;
+}
+/*reject*/
+.reject{
+	background-image:url(../images/icons/cross.png) !important;
+}
+/*图片上传*/
+.x-edit-insertimage{
+	background-image:url(../images/icons/picture.png) !important;
+}
+/*附件上传*/
+.x-edit-insertattach{
+	background-image:url(../images/icons/attach.png) !important;
+}
+.x-btn-icon {background-position: 0 0;} 
